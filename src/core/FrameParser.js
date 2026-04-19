@@ -84,6 +84,7 @@ export class FrameParser {
 
       try {
         const data = JSON.parse(jsonStr);
+        eventBus.emit('frame:receivedJSON', data);
         this._emitFrame({
           title: data.t || data.title || 'Telemetry',
           groups: data.g || data.groups || [],

@@ -63,7 +63,8 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-3);
+  min-width: 0;
 }
 
 /* ── Sidebar Section ── */
@@ -78,11 +79,15 @@
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-2);
   padding-bottom: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .sidebar-section-content {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
 }
 
 /* ── Form Row ── */
@@ -90,34 +95,55 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  min-width: 0;
 }
 .form-label {
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .form-input {
   width: 100%;
   height: 30px;
   font-size: var(--font-size-sm);
+  min-width: 0;
 }
 .form-select {
   width: 100%;
   height: 30px;
   font-size: var(--font-size-sm);
+  min-width: 0;
 }
 .form-row-inline {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
 }
 .form-row-inline .form-label {
-  width: 90px;
+  width: 80px;
+  min-width: 80px;
   flex-shrink: 0;
+  font-size: 11px;
 }
 .form-row-inline .form-input,
 .form-row-inline .form-select {
   flex: 1;
+  min-width: 0;
+}
+
+/* ── Radio / Checkbox fix ── */
+.radio-wrap, .checkbox-wrap {
+  min-width: 0;
+}
+.radio-wrap span, .checkbox-wrap span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-xs);
 }
 
 /* ── Connection Status ── */
@@ -157,6 +183,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
 }
 .driver-config-title {
   font-size: var(--font-size-xs);
@@ -170,3 +197,36 @@
 .driver-config-title-icon {
   color: var(--accent-blue);
 }
+
+/* ── JSON Editor Panel ── */
+.json-editor-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.json-editor-textarea {
+  width: 100%;
+  min-height: 160px;
+  background: rgba(6,10,19,0.9);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--accent-green);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: var(--space-2);
+  resize: vertical;
+  line-height: 1.5;
+  outline: none;
+}
+.json-editor-textarea:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px var(--accent-blue-glow);
+}
+.json-editor-status {
+  font-size: 10px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+}
+.json-editor-status.valid { color: var(--accent-green); }
+.json-editor-status.invalid { color: var(--accent-red); }

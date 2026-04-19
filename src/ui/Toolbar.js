@@ -184,6 +184,9 @@ export class Toolbar {
       eventBus.emit('toast', { type: 'success', message: 'CSV exported!' });
     });
 
+    // Preferences
+    this._container.querySelector('#btn-preferences').addEventListener('click', () => eventBus.emit('ui:openPreferences'));
+
     // Project editor
     this._container.querySelector('#btn-project-editor').addEventListener('click', () => eventBus.emit('ui:openEditor'));
 

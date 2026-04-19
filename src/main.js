@@ -10,6 +10,7 @@ import { Sidebar } from './ui/Sidebar.js';
 import { Dashboard } from './ui/Dashboard.js';
 import { Console } from './ui/Console.js';
 import { ProjectModel } from './core/ProjectModel.js';
+import { PreferencesDialog } from './ui/PreferencesDialog.js';
 
 class App {
   constructor() {
@@ -18,6 +19,7 @@ class App {
     this._project = new ProjectModel();
     this._dashboard = null;
     this._console = null;
+    this._prefs = null;
     this._init();
   }
 
@@ -49,6 +51,9 @@ class App {
     // Console
     const conArea = document.getElementById('console-area');
     this._console = new Console(conArea, this._conn);
+
+    // Preferences Dialog
+    this._prefs = new PreferencesDialog(document.getElementById('modal-root'));
 
     // Taskbar
     this._renderTaskbar();
@@ -107,6 +112,25 @@ class App {
     // Toast notifications
     eventBus.on('toast', ({ type, message }) => this._showToast(type, message));
 
+    // Empty-state quick-start buttons
+    eventBus.on('ui:startSimulator', () => {
+      this._sim?.start?.();
+      this._sim?.toggle?.();
+      eventBus.emit('toast', { type: 'info', message: 'Demo Simulator started!' });
+    });
+    eventBus.on('project:openFile', () => {
+      const input = document.createElement('input');
+      input.type = 'file'; input.accept = '.json';
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => eventBus.emit('project:load', ev.target.result);
+        reader.readAsText(file);
+      });
+      input.click();
+    });
+
+
     // Project load from file
     eventBus.on('project:load', (jsonStr) => {
       if (this._project.loadFromJSON(jsonStr)) {
@@ -137,9 +161,30 @@ class App {
       if (el) el.textContent = mode;
     });
 
-    // Update connect button when sim toggles
-    eventBus.on('state:connectionStateChanged', () => {
-      // Handled per-component
+    // Apply JSON schema from sidebar editor (DeviceSendsJSON mode)
+    eventBus.on('project:applyJSON', (schema) => {
+      // Build a project-compatible structure from the compact JSON format
+      const groups = (schema.g || schema.groups || []).map((g, gi) => ({
+        title: g.t || g.title || `Group ${gi + 1}`,
+        widget: g.w || g.widget || 'MultiPlot',
+        datasets: (g.d || g.datasets || []).map((d, di) => ({
+          title: d.t || d.title || `Dataset ${di + 1}`,
+          index: di,
+          units: d.u || d.units || '',
+          min: d.min ?? 0,
+          max: d.max ?? 100,
+          gauge: d.g ?? false,
+          bar: d.b ?? false,
+          widget: d.w || 'Bar'
+        }))
+      }));
+      const project = {
+        title: schema.t || schema.title || 'Device Project',
+        groups
+      };
+      this._dashboard.buildFromProject(project);
+      const tbProject = document.getElementById('tb-project');
+      if (tbProject) tbProject.textContent = project.title;
     });
 
     // Keyboard shortcuts
@@ -147,6 +192,10 @@ class App {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         eventBus.emit('ui:toggleSidebar');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault();
+        eventBus.emit('ui:openPreferences');
       }
     });
   }

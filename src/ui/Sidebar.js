@@ -77,6 +77,41 @@ export class Sidebar {
           <!-- Driver Config Panel (dynamic) -->
           <div class="sidebar-section" id="driver-panel"></div>
 
+          <!-- JSON Project Editor (DeviceSendsJSON mode) -->
+          <div class="sidebar-section" id="json-editor-section" style="display:none">
+            <div class="sidebar-section-label">JSON Project Editor</div>
+            <div class="json-editor-panel">
+              <div style="font-size:10px;color:var(--text-muted);line-height:1.5;margin-bottom:4px">
+                Device should send JSON wrapped in <code style="color:var(--accent-cyan)">/* ... */</code> delimiters.
+                Edit the schema below to customize dashboard widgets.
+              </div>
+              <textarea class="json-editor-textarea" id="json-schema-editor" spellcheck="false" rows="10">${JSON.stringify({
+  "t": "My Device",
+  "g": [
+    {
+      "t": "Sensors",
+      "w": "multiplot",
+      "d": [
+        {"t": "Temperature", "v": 0, "u": "\u00b0C", "g": true, "b": true, "min": -20, "max": 80},
+        {"t": "Humidity",    "v": 0, "u": "%",   "g": false,"b": true, "min": 0,   "max": 100}
+      ]
+    }
+  ]
+}, null, 2)}</textarea>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span class="json-editor-status valid" id="json-status">✓ Valid JSON</span>
+                <div style="display:flex;gap:4px">
+                  <button class="btn" id="btn-json-load" style="font-size:11px;padding:3px 8px">📂 Load JSON</button>
+                  <button class="btn btn-primary" id="btn-json-apply" style="font-size:11px;padding:3px 8px">▶ Apply</button>
+                </div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:4px">
+                <strong style="color:var(--text-secondary)">Last received JSON:</strong>
+                <div id="json-last-received" style="color:var(--accent-green);font-family:var(--font-mono);font-size:10px;max-height:80px;overflow-y:auto;margin-top:2px;word-break:break-all">None</div>
+              </div>
+            </div>
+          </div>
+
           <!-- Frame Config -->
           <div class="sidebar-section">
             <div class="sidebar-section-label">Frame Settings</div>
@@ -114,7 +149,10 @@ export class Sidebar {
   _bindEvents() {
     // Operation mode
     this._container.querySelectorAll('input[name="opMode"]').forEach(r => {
-      r.addEventListener('change', () => { appState.operationMode = r.value; });
+      r.addEventListener('change', () => {
+        appState.operationMode = r.value;
+        this._toggleJsonEditor(r.value);
+      });
     });
 
     // Export toggles
@@ -141,6 +179,76 @@ export class Sidebar {
     // Points
     const pointsInput = this._container.querySelector('#cfg-points');
     if (pointsInput) pointsInput.addEventListener('change', () => { appState.points = parseInt(pointsInput.value) || 100; });
+
+    // JSON editor
+    this._bindJsonEditor();
+
+    // Show/hide JSON editor based on current mode
+    this._toggleJsonEditor(appState.operationMode);
+  }
+
+  _toggleJsonEditor(mode) {
+    const section = this._container.querySelector('#json-editor-section');
+    if (!section) return;
+    section.style.display = mode === 'DeviceSendsJSON' ? 'block' : 'none';
+  }
+
+  _bindJsonEditor() {
+    const textarea = this._container.querySelector('#json-schema-editor');
+    const statusEl = this._container.querySelector('#json-status');
+    const applyBtn = this._container.querySelector('#btn-json-apply');
+    const loadBtn = this._container.querySelector('#btn-json-load');
+    if (!textarea) return;
+
+    // Live validation
+    textarea.addEventListener('input', () => {
+      try {
+        JSON.parse(textarea.value);
+        if (statusEl) { statusEl.textContent = '✓ Valid JSON'; statusEl.className = 'json-editor-status valid'; }
+        if (applyBtn) applyBtn.disabled = false;
+      } catch (e) {
+        if (statusEl) { statusEl.textContent = '✗ ' + e.message.slice(0, 40); statusEl.className = 'json-editor-status invalid'; }
+        if (applyBtn) applyBtn.disabled = true;
+      }
+    });
+
+    // Apply button — apply the JSON schema to the dashboard
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => {
+        try {
+          const schema = JSON.parse(textarea.value);
+          eventBus.emit('project:applyJSON', schema);
+          eventBus.emit('toast', { type: 'success', message: 'JSON schema applied to dashboard!' });
+        } catch (e) {
+          eventBus.emit('toast', { type: 'error', message: 'Invalid JSON: ' + e.message });
+        }
+      });
+    }
+
+    // Load from file
+    if (loadBtn) {
+      loadBtn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = '.json';
+        input.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            textarea.value = ev.target.result;
+            textarea.dispatchEvent(new Event('input'));
+          };
+          reader.readAsText(file);
+        });
+        input.click();
+      });
+    }
+
+    // Listen for incoming JSON frames and display them
+    eventBus.on('frame:receivedJSON', (json) => {
+      const lastEl = this._container.querySelector('#json-last-received');
+      if (lastEl) lastEl.textContent = JSON.stringify(json).slice(0, 200);
+    });
   }
 
   _updateDriverPanel() {

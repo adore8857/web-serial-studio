@@ -1,8 +1,11 @@
-/* Widget Styles */
-.widget { display:flex;flex-direction:column;background:var(--widget-bg);border:1px solid var(--widget-border);border-radius:var(--radius-lg);overflow:hidden;min-height:220px;transition:border-color var(--transition-fast),box-shadow var(--transition-fast);backdrop-filter:var(--glass-blur);position:relative }
-.widget:hover { border-color:var(--widget-hover-border);box-shadow:var(--shadow-sm) }
-.widget-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);background:var(--widget-header);border-bottom:1px solid var(--border-subtle);flex-shrink:0;min-height:var(--widget-header-height) }
-.widget-title { font-size:var(--font-size-xs);font-weight:var(--font-weight-semibold);color:var(--text-secondary);display:flex;align-items:center;gap:var(--space-2);text-transform:uppercase;letter-spacing:.04em }
+/* Widget Styles - Free-form drag/resize layout */
+.widget { display:flex;flex-direction:column;background:var(--widget-bg);border:1px solid var(--widget-border);border-radius:var(--radius-lg);overflow:hidden;transition:border-color var(--transition-fast),box-shadow var(--transition-fast);backdrop-filter:var(--glass-blur);position:absolute;box-sizing:border-box;min-width:240px;min-height:180px }
+.widget:hover { border-color:var(--widget-hover-border);box-shadow:var(--shadow-md) }
+.widget.dragging { border-color:var(--accent-blue);box-shadow:0 8px 32px rgba(59,130,246,.25);opacity:.92;z-index:100 }
+.widget.resizing { border-color:var(--accent-cyan);box-shadow:0 4px 24px rgba(6,182,212,.2);z-index:100 }
+.widget-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);background:var(--widget-header);border-bottom:1px solid var(--border-subtle);flex-shrink:0;min-height:var(--widget-header-height);cursor:grab }
+.widget-header:active { cursor:grabbing }
+.widget-title { font-size:var(--font-size-xs);font-weight:var(--font-weight-semibold);color:var(--text-secondary);display:flex;align-items:center;gap:var(--space-2);text-transform:uppercase;letter-spacing:.04em;user-select:none }
 .widget-title-icon { font-size:12px;color:var(--accent-blue) }
 .widget-actions { display:flex;align-items:center;gap:2px }
 .widget-action-btn { width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--text-muted);cursor:pointer;border-radius:var(--radius-sm);font-size:11px;transition:all var(--transition-fast) }
@@ -11,8 +14,11 @@
 .widget-body canvas { width:100%!important;height:100%!important }
 .widget-value { font-size:var(--font-size-2xl);font-weight:var(--font-weight-bold);color:var(--text-primary);text-align:center;font-family:var(--font-mono) }
 .widget-unit { font-size:var(--font-size-xs);color:var(--text-muted);text-align:center }
-.widget-span-2 { grid-column:span 2 }
-.widget-full { grid-column:1/-1 }
+
+/* Resize handle */
+.widget-resize-handle { position:absolute;bottom:0;right:0;width:18px;height:18px;cursor:se-resize;z-index:20;opacity:0;transition:opacity var(--transition-fast) }
+.widget-resize-handle::before { content:'';position:absolute;bottom:3px;right:3px;width:10px;height:10px;border-right:2px solid var(--accent-blue);border-bottom:2px solid var(--accent-blue);border-radius:0 0 3px 0 }
+.widget:hover .widget-resize-handle { opacity:1 }
 
 /* Gauge Widget */
 .gauge-container { display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:var(--space-1) }

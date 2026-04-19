@@ -5,13 +5,15 @@
 .toolbar {
   display: flex;
   align-items: stretch;
-  height: var(--toolbar-height);
+  min-height: var(--toolbar-height);
+  height: auto;
   background: linear-gradient(180deg, var(--toolbar-top), var(--toolbar-bottom));
   border-bottom: 1px solid var(--toolbar-border);
   user-select: none;
   flex-shrink: 0;
   position: relative;
   z-index: var(--z-sticky);
+  overflow: visible;
 }
 
 .toolbar-brand {
@@ -58,7 +60,7 @@
   align-items: stretch;
   flex: 1;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   gap: 0;
 }
 
@@ -66,8 +68,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   border-right: 1px solid var(--toolbar-section-border);
-  padding: var(--space-2) var(--space-3);
+  padding: 6px var(--space-3) 4px;
   min-width: 0;
 }
 .toolbar-section-content {
@@ -82,7 +85,8 @@
   letter-spacing: 0.08em;
   color: var(--text-muted);
   font-weight: var(--font-weight-medium);
-  margin-top: 2px;
+  margin-top: 3px;
+  padding-bottom: 2px;
   white-space: nowrap;
 }
 
