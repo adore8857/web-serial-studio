@@ -1,0 +1,35 @@
+/* Taskbar & Editor Styles */
+
+/* Taskbar */
+.taskbar { display:flex;align-items:center;height:var(--taskbar-height);background:var(--bg-secondary);border-top:1px solid var(--border-subtle);padding:0 var(--space-2);flex-shrink:0;gap:var(--space-1);user-select:none;z-index:var(--z-sticky) }
+.taskbar-tabs { display:flex;align-items:center;gap:var(--space-1);flex:1;overflow-x:auto }
+.taskbar-tab { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-3);border-radius:var(--radius-sm);font-size:var(--font-size-xs);cursor:pointer;transition:all var(--transition-fast);color:var(--text-muted);background:transparent;border:none;white-space:nowrap }
+.taskbar-tab:hover { background:rgba(148,163,184,.06);color:var(--text-secondary) }
+.taskbar-tab.active { background:rgba(59,130,246,.12);color:var(--accent-blue) }
+.taskbar-tab-icon { font-size:12px }
+.taskbar-status { display:flex;align-items:center;gap:var(--space-3);font-size:var(--font-size-xs);color:var(--text-muted);padding:0 var(--space-2) }
+.taskbar-status-item { display:flex;align-items:center;gap:var(--space-1) }
+.taskbar-menu-btn { display:flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);border-radius:var(--radius-sm);font-size:var(--font-size-xs);font-weight:var(--font-weight-semibold);cursor:pointer;color:var(--text-secondary);background:rgba(148,163,184,.06);border:1px solid var(--border-subtle);transition:all var(--transition-fast) }
+.taskbar-menu-btn:hover { background:rgba(148,163,184,.1);color:var(--text-primary) }
+
+/* Project Editor Modal */
+.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:var(--z-modal);animation:fadeIn .2s ease }
+.modal { background:var(--bg-secondary);border:1px solid var(--border-default);border-radius:var(--radius-xl);width:90%;max-width:900px;max-height:85vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl);animation:fadeInUp .3s ease }
+.modal-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--border-subtle) }
+.modal-title { font-size:var(--font-size-lg);font-weight:var(--font-weight-bold) }
+.modal-body { flex:1;overflow-y:auto;padding:var(--space-5) }
+.modal-footer { display:flex;align-items:center;justify-content:flex-end;gap:var(--space-2);padding:var(--space-3) var(--space-5);border-top:1px solid var(--border-subtle) }
+
+/* Editor layout */
+.editor-layout { display:flex;gap:var(--space-4);min-height:400px }
+.editor-tree { width:240px;flex-shrink:0;background:rgba(14,21,37,.5);border:1px solid var(--border-subtle);border-radius:var(--radius-md);overflow-y:auto }
+.editor-tree-item { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);cursor:pointer;font-size:var(--font-size-sm);transition:background var(--transition-fast);border-left:2px solid transparent }
+.editor-tree-item:hover { background:rgba(148,163,184,.05) }
+.editor-tree-item.active { background:rgba(59,130,246,.08);border-left-color:var(--accent-blue);color:var(--accent-blue) }
+.editor-tree-item.group { font-weight:var(--font-weight-semibold) }
+.editor-tree-item.dataset { padding-left:var(--space-6) }
+.editor-tree-icon { font-size:12px;color:var(--text-muted) }
+.editor-form { flex:1;display:flex;flex-direction:column;gap:var(--space-3) }
+.editor-form-section { display:flex;flex-direction:column;gap:var(--space-2) }
+.editor-form-section-title { font-size:var(--font-size-xs);font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.08em;color:var(--accent-cyan);padding-bottom:var(--space-1);border-bottom:1px solid var(--border-subtle) }
+.editor-form-grid { display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2) var(--space-4) }

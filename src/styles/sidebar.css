@@ -1,0 +1,172 @@
+/* ═══════════════════════════════════════════════════════════
+   Web Serial Studio — Sidebar Styles
+   ═══════════════════════════════════════════════════════════ */
+
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: margin-left var(--transition-base), opacity var(--transition-base);
+  flex-shrink: 0;
+  z-index: var(--z-base);
+}
+.sidebar.collapsed {
+  margin-left: calc(-1 * var(--sidebar-width));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sidebar-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sidebar-title-icon {
+  color: var(--accent-cyan);
+  font-size: 14px;
+}
+.sidebar-close {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  font-size: 14px;
+}
+.sidebar-close:hover {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--text-primary);
+}
+
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ── Sidebar Section ── */
+.sidebar-section {
+  margin-bottom: var(--space-4);
+}
+.sidebar-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sidebar-section-label);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-1);
+}
+.sidebar-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ── Form Row ── */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.form-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+.form-input {
+  width: 100%;
+  height: 30px;
+  font-size: var(--font-size-sm);
+}
+.form-select {
+  width: 100%;
+  height: 30px;
+  font-size: var(--font-size-sm);
+}
+.form-row-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.form-row-inline .form-label {
+  width: 90px;
+  flex-shrink: 0;
+}
+.form-row-inline .form-input,
+.form-row-inline .form-select {
+  flex: 1;
+}
+
+/* ── Connection Status ── */
+.sidebar-status {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+.sidebar-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-disconnected);
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+}
+.sidebar-status-dot.connected {
+  background: var(--status-connected);
+  box-shadow: 0 0 8px var(--accent-green-glow);
+  animation: pulse 2s infinite;
+}
+.sidebar-status-dot.error {
+  background: var(--status-error);
+  box-shadow: 0 0 8px var(--accent-red-glow);
+}
+
+/* ── Driver Config ── */
+.driver-config {
+  background: rgba(20, 28, 46, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.driver-config-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+.driver-config-title-icon {
+  color: var(--accent-blue);
+}

@@ -1,0 +1,202 @@
+/* ═══════════════════════════════════════════════════════════
+   Web Serial Studio — Toolbar Styles
+   ═══════════════════════════════════════════════════════════ */
+
+.toolbar {
+  display: flex;
+  align-items: stretch;
+  height: var(--toolbar-height);
+  background: linear-gradient(180deg, var(--toolbar-top), var(--toolbar-bottom));
+  border-bottom: 1px solid var(--toolbar-border);
+  user-select: none;
+  flex-shrink: 0;
+  position: relative;
+  z-index: var(--z-sticky);
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  border-right: 1px solid var(--toolbar-section-border);
+  min-width: 180px;
+}
+.toolbar-brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  font-weight: 700;
+  box-shadow: var(--shadow-glow-blue);
+}
+.toolbar-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+.toolbar-brand-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.toolbar-brand-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* ── Ribbon Sections ── */
+.toolbar-sections {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 0;
+}
+
+.toolbar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid var(--toolbar-section-border);
+  padding: var(--space-2) var(--space-3);
+  min-width: 0;
+}
+.toolbar-section-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+.toolbar-section-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: var(--font-weight-medium);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* ── Toolbar Button ── */
+.toolbar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  min-width: 52px;
+  position: relative;
+}
+.toolbar-btn:hover {
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--text-primary);
+}
+.toolbar-btn:active {
+  background: rgba(148, 163, 184, 0.12);
+  transform: scale(0.96);
+}
+.toolbar-btn.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: var(--accent-blue);
+}
+.toolbar-btn-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.toolbar-btn-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+/* ── Toolbar Button (Compact / Horizontal) ── */
+.toolbar-btn-compact {
+  flex-direction: row;
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  gap: var(--space-1);
+}
+.toolbar-btn-compact .toolbar-btn-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 13px;
+}
+.toolbar-btn-compact .toolbar-btn-label {
+  font-size: var(--font-size-xs);
+}
+
+/* ── Driver Buttons ── */
+.toolbar-drivers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+/* ── Connect Button ── */
+.toolbar-connect-area {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  margin-left: auto;
+}
+.toolbar-connect-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border: 1.5px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+.toolbar-connect-btn.disconnected {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  color: white;
+  box-shadow: var(--shadow-glow-blue);
+}
+.toolbar-connect-btn.disconnected:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+.toolbar-connect-btn.connected {
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-green-dim));
+  color: white;
+  box-shadow: var(--shadow-glow-green);
+  animation: glow 3s infinite;
+}
+.toolbar-connect-btn.connected:hover {
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dim));
+  box-shadow: var(--shadow-glow-red);
+  animation: none;
+}
+.toolbar-connect-btn .btn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}

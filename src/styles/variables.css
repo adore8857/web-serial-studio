@@ -1,0 +1,168 @@
+/* ═══════════════════════════════════════════════════════════
+   Web Serial Studio — Design Tokens
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Background Layers ── */
+  --bg-primary: #060a13;
+  --bg-secondary: #0c1220;
+  --bg-tertiary: #141c2e;
+  --bg-elevated: #1a2540;
+  --bg-surface: #1e2a45;
+
+  /* ── Accent Colors ── */
+  --accent-blue: #3b82f6;
+  --accent-blue-dim: #2563eb;
+  --accent-blue-glow: rgba(59, 130, 246, 0.25);
+  --accent-cyan: #06b6d4;
+  --accent-cyan-dim: #0891b2;
+  --accent-green: #10b981;
+  --accent-green-dim: #059669;
+  --accent-green-glow: rgba(16, 185, 129, 0.3);
+  --accent-amber: #f59e0b;
+  --accent-amber-dim: #d97706;
+  --accent-red: #ef4444;
+  --accent-red-dim: #dc2626;
+  --accent-red-glow: rgba(239, 68, 68, 0.3);
+  --accent-purple: #8b5cf6;
+  --accent-pink: #ec4899;
+
+  /* ── Text ── */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-disabled: #475569;
+  --text-inverse: #0f172a;
+
+  /* ── Borders ── */
+  --border-subtle: rgba(148, 163, 184, 0.08);
+  --border-default: rgba(148, 163, 184, 0.12);
+  --border-strong: rgba(148, 163, 184, 0.2);
+  --border-accent: rgba(59, 130, 246, 0.4);
+
+  /* ── Toolbar ── */
+  --toolbar-top: #0e1525;
+  --toolbar-bottom: #0a1020;
+  --toolbar-border: rgba(148, 163, 184, 0.1);
+  --toolbar-section-border: rgba(148, 163, 184, 0.06);
+
+  /* ── Sidebar ── */
+  --sidebar-bg: #0b1020;
+  --sidebar-border: rgba(148, 163, 184, 0.08);
+  --sidebar-section-label: var(--accent-cyan);
+
+  /* ── Widget ── */
+  --widget-bg: rgba(12, 18, 32, 0.85);
+  --widget-header: rgba(20, 28, 46, 0.95);
+  --widget-border: rgba(148, 163, 184, 0.1);
+  --widget-hover-border: rgba(59, 130, 246, 0.3);
+
+  /* ── Input / Form ── */
+  --input-bg: rgba(14, 21, 37, 0.8);
+  --input-border: rgba(148, 163, 184, 0.15);
+  --input-focus-border: var(--accent-blue);
+  --input-placeholder: var(--text-muted);
+
+  /* ── Button ── */
+  --btn-primary-bg: var(--accent-blue);
+  --btn-primary-hover: var(--accent-blue-dim);
+  --btn-secondary-bg: rgba(148, 163, 184, 0.1);
+  --btn-secondary-hover: rgba(148, 163, 184, 0.18);
+  --btn-danger-bg: var(--accent-red);
+  --btn-danger-hover: var(--accent-red-dim);
+  --btn-success-bg: var(--accent-green);
+  --btn-success-hover: var(--accent-green-dim);
+
+  /* ── Status ── */
+  --status-connected: var(--accent-green);
+  --status-disconnected: var(--text-muted);
+  --status-error: var(--accent-red);
+  --status-warning: var(--accent-amber);
+
+  /* ── Scrollbar ── */
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(148, 163, 184, 0.15);
+  --scrollbar-thumb-hover: rgba(148, 163, 184, 0.25);
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+  --font-size-xs: 0.6875rem;   /* 11px */
+  --font-size-sm: 0.75rem;     /* 12px */
+  --font-size-base: 0.8125rem; /* 13px */
+  --font-size-md: 0.875rem;    /* 14px */
+  --font-size-lg: 1rem;        /* 16px */
+  --font-size-xl: 1.125rem;    /* 18px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Radii ── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-glow-blue: 0 0 20px rgba(59, 130, 246, 0.15);
+  --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.15);
+  --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.15);
+
+  /* ── Glassmorphism ── */
+  --glass-bg: rgba(12, 18, 32, 0.75);
+  --glass-blur: blur(16px);
+  --glass-border: rgba(148, 163, 184, 0.08);
+
+  /* ── Transitions ── */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Z-index ── */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* ── Layout ── */
+  --toolbar-height: 80px;
+  --sidebar-width: 320px;
+  --taskbar-height: 36px;
+  --widget-header-height: 34px;
+  --widget-min-width: 280px;
+  --widget-min-height: 200px;
+
+  /* ── Dataset Colors ── */
+  --dataset-0: #3b82f6;
+  --dataset-1: #ef4444;
+  --dataset-2: #10b981;
+  --dataset-3: #f59e0b;
+  --dataset-4: #8b5cf6;
+  --dataset-5: #ec4899;
+  --dataset-6: #06b6d4;
+  --dataset-7: #f97316;
+  --dataset-8: #14b8a6;
+  --dataset-9: #6366f1;
+  --dataset-10: #a855f7;
+  --dataset-11: #84cc16;
+}

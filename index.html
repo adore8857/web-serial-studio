@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Web Serial Studio — Open-source real-time telemetry dashboard. Supports UART, BLE, WebSocket and MQTT." />
+  <meta name="theme-color" content="#060a13" />
+  <title>Serial Studio — Web Edition</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="src/styles/index.css" />
+  <link rel="stylesheet" href="src/styles/toolbar.css" />
+  <link rel="stylesheet" href="src/styles/sidebar.css" />
+  <link rel="stylesheet" href="src/styles/dashboard.css" />
+  <link rel="stylesheet" href="src/styles/console.css" />
+  <link rel="stylesheet" href="src/styles/widgets.css" />
+  <link rel="stylesheet" href="src/styles/editor.css" />
+
+  <style>
+    /* Quick fixes and overrides */
+    #toolbar-root { flex-shrink: 0; }
+    #taskbar-root { flex-shrink: 0; }
+    #sidebar-root { display: flex; }
+    #content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #dashboard-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #console-area {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar collapse */
+    .sidebar.collapsed {
+      margin-left: calc(-1 * var(--sidebar-width));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Fullscreen fix */
+    :fullscreen .toolbar,
+    :fullscreen .taskbar { display: none; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
