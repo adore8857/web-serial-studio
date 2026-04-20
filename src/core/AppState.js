@@ -6,7 +6,8 @@ import { eventBus } from './EventBus.js';
 export const OperationMode = {
   ProjectFile: 'ProjectFile',
   DeviceSendsJSON: 'DeviceSendsJSON',
-  QuickPlot: 'QuickPlot'
+  QuickPlot: 'QuickPlot',
+  STM32Binary: 'STM32Binary'
 };
 
 export const BusType = {
@@ -34,7 +35,7 @@ class AppState {
     this._consoleExportEnabled = false;
     this._sidebarVisible = true;
     this._currentWorkspace = 'dashboard';
-    this._points = 100;
+    this._points = 5000;
     this._frameCount = 0;
     this._dataRate = 0;
 
@@ -137,7 +138,7 @@ class AppState {
     eventBus.emit('state:workspaceChanged', v);
   }
   set points(v) {
-    this._points = Math.max(10, Math.min(10000, v));
+    this._points = Math.max(10, Math.min(50000, v));
     eventBus.emit('state:pointsChanged', this._points);
     this._saveSettings();
   }

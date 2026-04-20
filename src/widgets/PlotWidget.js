@@ -61,6 +61,19 @@ export class PlotWidget extends WidgetBase {
             titleColor: '#94a3b8',
             bodyColor: '#f1f5f9',
             bodyFont: { family: "'JetBrains Mono', monospace", size: 11 }
+          },
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x',
+              modifierKey: 'shift', // User must hold shift to pan if desired, or can just drag
+            },
+            zoom: {
+              wheel: { enabled: true },
+              pinch: { enabled: true },
+              drag: { enabled: true, backgroundColor: 'rgba(59,130,246,0.2)' },
+              mode: 'x',
+            }
           }
         },
         scales: {
@@ -98,15 +111,27 @@ export class PlotWidget extends WidgetBase {
     if (this._paused || this._destroyed) return;
     const maxPts = appState.points;
 
-    this._labels.push('');
-    if (this._labels.length > maxPts) this._labels.shift();
-
+    let pointsAdded = 1;
     this._datasetIndices.forEach((idx, i) => {
       const ds = frame.datasets?.[idx];
-      const val = ds ? (typeof ds.value === 'number' ? ds.value : parseFloat(ds.value) || 0) : 0;
-      this._data[i].push(val);
-      if (this._data[i].length > maxPts) this._data[i].shift();
+      if (ds && ds.buffer && Array.isArray(ds.buffer)) {
+        this._data[i].push(...ds.buffer);
+        pointsAdded = Math.max(pointsAdded, ds.buffer.length);
+      } else {
+        const val = ds ? (typeof ds.value === 'number' ? ds.value : parseFloat(ds.value) || 0) : 0;
+        this._data[i].push(val);
+      }
+      
+      // Trim to maxPoints
+      if (this._data[i].length > maxPts) {
+        this._data[i].splice(0, this._data[i].length - maxPts);
+      }
     });
+
+    // Update labels to match the largest dataset
+    const maxLen = Math.max(...this._data.map(d => d.length));
+    while (this._labels.length < maxLen) this._labels.push('');
+    if (this._labels.length > maxLen) this._labels.splice(0, this._labels.length - maxLen);
 
     if (this._chart) this._chart.update('none');
   }

@@ -135,7 +135,14 @@ class App {
     eventBus.on('project:load', (jsonStr) => {
       if (this._project.loadFromJSON(jsonStr)) {
         this._dashboard.buildFromProject(this._project.project);
-        appState.operationMode = 'ProjectFile';
+        
+        // Respect the protocol defined in the project file, or default to ProjectFile (CSV)
+        if (this._project.project.protocol === 'STM32Binary') {
+          appState.operationMode = 'STM32Binary';
+        } else {
+          appState.operationMode = 'ProjectFile';
+        }
+        
         const tbProject = document.getElementById('tb-project');
         if (tbProject) tbProject.textContent = this._project.title;
         eventBus.emit('toast', { type: 'success', message: `Loaded: ${this._project.title}` });

@@ -31,10 +31,10 @@ export class WebSocketDriver {
         this._ws.onclose = () => this._emit('close');
         this._ws.onmessage = (e) => {
           if (typeof e.data === 'string') {
-            this._emit('data', e.data);
+            const encoder = new TextEncoder();
+            this._emit('data', encoder.encode(e.data));
           } else {
-            const decoder = new TextDecoder();
-            this._emit('data', decoder.decode(e.data));
+            this._emit('data', new Uint8Array(e.data));
           }
         };
       } catch (err) {

@@ -1,5 +1,5 @@
 /**
- * Sidebar — Device setup panel
+ * Sidebar - Device setup panel
  */
 import { eventBus } from '../core/EventBus.js';
 import { appState, OperationMode, BusType, ConnectionState } from '../core/AppState.js';

@@ -1,5 +1,5 @@
 /**
- * DataSimulator — Built-in data generator for demo mode
+ * DataSimulator - Built-in data generator for demo mode
  */
 import { eventBus } from '../core/EventBus.js';
 import { appState, ConnectionState } from '../core/AppState.js';
@@ -45,18 +45,11 @@ export class DataSimulator {
   get isRunning() { return this._running; }
 
   _generateFrame() {
-    const t = this._t;
-    // Generate realistic telemetry data
-    const temp = 22 + 5 * Math.sin(t * 0.3) + (Math.random() - 0.5) * 0.5;
-    const humidity = 55 + 15 * Math.sin(t * 0.2 + 1) + (Math.random() - 0.5) * 1;
-    const pressure = 1013 + 10 * Math.sin(t * 0.15 + 2) + (Math.random() - 0.5) * 0.3;
-    const accelX = Math.sin(t * 1.5) * 2 + (Math.random() - 0.5) * 0.2;
-    const accelY = Math.cos(t * 1.2) * 1.5 + (Math.random() - 0.5) * 0.2;
-    const accelZ = 9.8 + Math.sin(t * 0.8) * 0.3 + (Math.random() - 0.5) * 0.1;
-    const heading = ((t * 15) % 360 + 360) % 360;
-    const voltage = 3.3 + 0.2 * Math.sin(t * 0.5) + (Math.random() - 0.5) * 0.05;
+    if (appState.operationMode === 'STM32Binary') {
+      return this._generateSTM32Frame();
+    }
 
-    return [
+    const csv = [
       temp.toFixed(2),
       humidity.toFixed(1),
       pressure.toFixed(1),
@@ -66,6 +59,43 @@ export class DataSimulator {
       heading.toFixed(1),
       voltage.toFixed(3)
     ].join(',') + '\n';
+
+    const encoder = new TextEncoder();
+    return encoder.encode(csv);
+  }
+
+  _generateSTM32Frame() {
+    const FRAME_SIZE = 5732;
+    const buffer = new Uint8Array(FRAME_SIZE);
+    const view = new DataView(buffer.buffer);
+
+    // Header
+    buffer.set([0x5A, 0xA5, 0x16, 0x5D, 0x02, 0xDD, 0x08, 0x54, 0x00, 0xA0, 0x00, 0x02], 0);
+
+    // Vibration (uint16_t[2132]) - Sine wave + noise
+    for (let i = 0; i < 2132; i++) {
+      const val = 2048 + Math.sin(this._t * 5 + i * 0.05) * 1000 + (Math.random() - 0.5) * 100;
+      view.setUint16(12 + i * 2, Math.floor(val), true);
+    }
+
+    // Strain 1, 2, 3 (int8_t[480])
+    for (let i = 0; i < 480; i++) {
+      const s1 = Math.sin(this._t * 2 + i * 0.02) * 50;
+      const s2 = Math.cos(this._t * 1.5 + i * 0.02) * 40;
+      const s3 = Math.sin(this._t * 3 + i * 0.01) * 30;
+      view.setInt8(4276 + i, Math.floor(s1));
+      view.setInt8(4756 + i, Math.floor(s2));
+      view.setInt8(5236 + i, Math.floor(s3));
+    }
+
+    // Temperature (int8_t[13])
+    view.setInt8(5716, 25 + Math.sin(this._t * 0.1) * 5);
+    view.setInt8(5717, 30 + Math.cos(this._t * 0.1) * 3);
+
+    // Tail
+    buffer.set([0xDD, 0xEE], 5730);
+
+    return buffer;
   }
 
   destroy() {

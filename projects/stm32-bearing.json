@@ -1,0 +1,30 @@
+{
+  "title": "STM32 Bearing Monitoring System",
+  "protocol": "STM32Binary",
+  "groups": [
+    {
+      "title": "High-Frequency Vibration",
+      "widget": "Plot",
+      "datasets": [
+        { "title": "Vibration Channel", "index": 0, "min": -32768, "max": 32767, "units": "Raw" }
+      ]
+    },
+    {
+      "title": "Strain Sensors (ADS124S08)",
+      "widget": "MultiPlot",
+      "datasets": [
+        { "title": "Strain 1", "index": 1, "min": -3, "max": 3, "units": "V" },
+        { "title": "Strain 2", "index": 2, "min": -3, "max": 3, "units": "V" },
+        { "title": "Strain 3", "index": 3, "min": -3, "max": 3, "units": "V" }
+      ]
+    },
+    {
+      "title": "Ambient Conditions",
+      "widget": "Gauges",
+      "datasets": [
+        { "title": "ADC Temp", "index": 4, "gauge": true, "min": -3, "max": 3, "units": "V" },
+        { "title": "TMP117 Temp", "index": 5, "gauge": true, "min": 0, "max": 100, "units": "°C" }
+      ]
+    }
+  ]
+}

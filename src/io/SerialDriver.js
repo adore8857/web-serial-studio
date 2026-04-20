@@ -47,8 +47,7 @@ export class SerialDriver {
           const { value, done } = await this._reader.read();
           if (done) break;
           if (value) {
-            const text = decoder.decode(value, { stream: true });
-            this._emit('data', text);
+            this._emit('data', value);
           }
         }
       } catch (err) {

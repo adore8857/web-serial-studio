@@ -97,6 +97,7 @@ export class ProjectModel {
   _validateProject(data) {
     return {
       title: data.title || 'Untitled',
+      protocol: data.protocol || '',
       separator: data.separator || ',',
       frameStart: data.frameStart || '',
       frameEnd: data.frameEnd || '\\n',

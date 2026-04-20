@@ -1,5 +1,5 @@
 /**
- * Console — Terminal console panel
+ * Console - Terminal console panel
  */
 import { eventBus } from '../core/EventBus.js';
 import { appState } from '../core/AppState.js';
@@ -74,9 +74,17 @@ export class Console {
     if (this._paused) return;
     this._lineNum++;
 
-    const displayData = this._hexMode && direction === 'rx'
-      ? [...new TextEncoder().encode(data)].map(b => b.toString(16).padStart(2, '0')).join(' ')
-      : data.replace(/\r?\n/g, '').trim();
+    let displayData = '';
+    if (data instanceof Uint8Array) {
+      if (this._hexMode) {
+        displayData = Array.from(data).map(b => b.toString(16).padStart(2, '0')).join(' ');
+      } else {
+        const decoder = new TextDecoder();
+        displayData = decoder.decode(data).replace(/\r?\n/g, '').replace(/[\x00-\x1F\x7F-\x9F]/g, '.').trim();
+      }
+    } else {
+      displayData = String(data).replace(/\r?\n/g, '').trim();
+    }
 
     if (!displayData) return;
 
