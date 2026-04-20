@@ -296,9 +296,9 @@ export class Sidebar {
     } else if (bus === BusType.MQTT) {
       const cfg = appState.mqttConfig;
       html += `
-        <div class="form-row">
-          <div class="form-label">Broker URL</div>
-          <input class="form-input" id="drv-mqtt-url" value="${cfg.brokerUrl}" placeholder="ws://broker:9001">
+        <div class="form-group">
+          <label>Broker URL (wss://)</label>
+          <input class="form-input" id="drv-mqtt-url" value="${cfg.brokerUrl}" placeholder="wss://broker.emqx.io:8084/mqtt">
         </div>
         <div class="form-row">
           <div class="form-label">Topic</div>

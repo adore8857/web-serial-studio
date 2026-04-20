@@ -50,14 +50,14 @@ class AppState {
 
     // WebSocket config
     this._wsConfig = {
-      url: 'ws://localhost:8080',
+      url: 'wss://localhost:8080',
       protocol: ''
     };
 
     // MQTT config
     this._mqttConfig = {
-      brokerUrl: 'ws://localhost:9001',
-      topic: 'serial-studio/data',
+      brokerUrl: 'wss://broker.emqx.io:8084/mqtt',
+      topic: 'sensor/data',
       username: '',
       password: '',
       qos: 0,
