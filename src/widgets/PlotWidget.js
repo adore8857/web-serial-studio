@@ -17,6 +17,10 @@ export class PlotWidget extends WidgetBase {
     this._labels = [];
     this._paused = false;
     this._frameHandler = (frame) => this._onFrame(frame);
+    this._syncVisibleYScale = () => {
+      this._updateVisibleYScale();
+      this._chart?.update('none');
+    };
   }
 
   _render(body) {
@@ -69,11 +73,15 @@ export class PlotWidget extends WidgetBase {
               modifierKey: 'shift', // User must hold shift to pan if desired, or can just drag
             },
             zoom: {
-              wheel: { enabled: true },
+              // Keep normal page scrolling working unless the user explicitly
+              // requests chart zoom with Ctrl/Cmd + wheel.
+              wheel: { enabled: true, modifierKey: 'ctrl' },
               pinch: { enabled: true },
               drag: { enabled: true, backgroundColor: 'rgba(59,130,246,0.2)' },
               mode: 'x',
-            }
+            },
+            onZoomComplete: this._syncVisibleYScale,
+            onPanComplete: this._syncVisibleYScale
           }
         },
         scales: {
@@ -82,6 +90,7 @@ export class PlotWidget extends WidgetBase {
             grid: { color: 'rgba(148,163,184,0.05)' }
           },
           y: {
+            beginAtZero: false,
             grid: { color: 'rgba(148,163,184,0.06)' },
             ticks: { color: '#64748b', font: { size: 10, family: "'JetBrains Mono', monospace" }, maxTicksLimit: 5 },
             border: { color: 'rgba(148,163,184,0.1)' }
@@ -133,13 +142,63 @@ export class PlotWidget extends WidgetBase {
     while (this._labels.length < maxLen) this._labels.push('');
     if (this._labels.length > maxLen) this._labels.splice(0, this._labels.length - maxLen);
 
-    if (this._chart) this._chart.update('none');
+    if (this._chart) {
+      this._updateVisibleYScale();
+      this._chart.update('none');
+    }
   }
 
   reset() {
     this._data = this._datasetIndices.map(() => []);
     this._labels = [];
-    if (this._chart) this._chart.update('none');
+    if (this._chart) {
+      if (typeof this._chart.resetZoom === 'function') this._chart.resetZoom();
+      this._chart.options.scales.y.min = undefined;
+      this._chart.options.scales.y.max = undefined;
+      this._chart.update('none');
+    }
+  }
+
+  _updateVisibleYScale() {
+    if (!this._chart) return;
+
+    const xScale = this._chart.scales?.x;
+    const yScale = this._chart.options?.scales?.y;
+    if (!xScale || !yScale) return;
+
+    const start = Number.isFinite(xScale.min) ? Math.max(0, Math.floor(xScale.min)) : 0;
+    const fallbackEnd = Math.max(...this._data.map(series => series.length - 1), 0);
+    const end = Number.isFinite(xScale.max) ? Math.max(start, Math.ceil(xScale.max)) : fallbackEnd;
+
+    const visible = [];
+    this._data.forEach(series => {
+      for (let i = start; i <= end && i < series.length; i += 1) {
+        const value = series[i];
+        if (Number.isFinite(value)) visible.push(value);
+      }
+    });
+
+    if (!visible.length) {
+      yScale.min = undefined;
+      yScale.max = undefined;
+      return;
+    }
+
+    let min = Math.min(...visible);
+    let max = Math.max(...visible);
+
+    if (min === max) {
+      const padding = Math.max(Math.abs(min) * 0.1, 1);
+      min -= padding;
+      max += padding;
+    } else {
+      const padding = Math.max((max - min) * 0.1, 0.01);
+      min -= padding;
+      max += padding;
+    }
+
+    yScale.min = min;
+    yScale.max = max;
   }
 
   destroy() {

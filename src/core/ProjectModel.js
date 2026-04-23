@@ -102,25 +102,32 @@ export class ProjectModel {
       frameStart: data.frameStart || '',
       frameEnd: data.frameEnd || '\\n',
       frameDetection: data.frameDetection || 'EndDelimiterOnly',
-      groups: (data.groups || []).map(g => ({
-        title: g.title || 'Group',
-        widget: g.widget || 'DataGrid',
-        datasets: (g.datasets || []).map((d, i) => ({
-          title: d.title || `Dataset ${i + 1}`,
-          index: d.index ?? i,
-          units: d.units || '',
-          widget: d.widget || 'Bar',
-          min: d.min ?? 0,
-          max: d.max ?? 100,
-          alarm: d.alarm ?? 0,
-          led: d.led ?? false,
-          fft: d.fft ?? false,
-          plot: d.plot ?? true,
-          bar: d.bar ?? false,
-          gauge: d.gauge ?? false,
-          compass: d.compass ?? false
-        }))
-      }))
+      groups: (data.groups || []).map(g => {
+        const groupWidget = g.widget || 'DataGrid';
+        return {
+          title: g.title || 'Group',
+          widget: groupWidget,
+          datasets: (g.datasets || []).map((d, i) => {
+            const min = d.min ?? d.widgetMin ?? d.plotMin ?? d.fftMin ?? 0;
+            const max = d.max ?? d.widgetMax ?? d.plotMax ?? d.fftMax ?? 100;
+            return {
+              title: d.title || `Dataset ${i + 1}`,
+              index: d.index ?? i,
+              units: d.units || '',
+              widget: d.widget || groupWidget || 'Bar',
+              min,
+              max,
+              alarm: d.alarm ?? d.alarmHigh ?? 0,
+              led: d.led ?? false,
+              fft: d.fft ?? false,
+              plot: d.plot ?? ['Plot', 'MultiPlot'].includes(groupWidget),
+              bar: d.bar ?? groupWidget === 'Bar',
+              gauge: d.gauge ?? groupWidget === 'Gauges',
+              compass: d.compass ?? groupWidget === 'Compass'
+            };
+          })
+        };
+      })
     };
   }
 }

@@ -115,9 +115,11 @@ export class Dashboard {
   constructor(container) {
     this._container = container;
     this._grid = null;
+    this._canvas = null;
     this._widgets = [];
     this._hasData = false;
     this._emptyEl = null;
+    this._wheelHandler = (e) => this._handleWheelScroll(e);
 
     this._frameHandler = () => {
       if (!this._hasData) {
@@ -176,10 +178,14 @@ export class Dashboard {
           <button class="btn" id="btn-open-project-empty" style="font-size:13px;padding:8px 20px">📁 Open Project File</button>
         </div>
       </div>
-      <div class="dashboard-grid hidden" id="dashboard-grid"></div>`;
+      <div class="dashboard-grid hidden" id="dashboard-grid">
+        <div class="dashboard-grid-canvas" id="dashboard-grid-canvas"></div>
+      </div>`;
 
     this._emptyEl = this._container.querySelector('#dashboard-empty');
     this._grid = this._container.querySelector('#dashboard-grid');
+    this._canvas = this._container.querySelector('#dashboard-grid-canvas');
+    this._container?.addEventListener('wheel', this._wheelHandler, { passive: false });
 
     this._container.querySelector('#btn-reset-data')
       .addEventListener('click', () => this._resetAll());
@@ -207,7 +213,7 @@ export class Dashboard {
       const layout = buildDefaultLayout(W);
       layout.forEach(def => {
         const w = this._createWidget(def.type, def.config);
-        if (w) { w.mount(this._grid); this._widgets.push(w); }
+        if (w) { w.mount(this._canvas); this._widgets.push(w); }
       });
       // Set grid canvas height to fit all widgets
       this._updateCanvasHeight();
@@ -221,7 +227,11 @@ export class Dashboard {
       const bottom = (parseInt(w._el.style.top) || 0) + (parseInt(w._el.style.height) || 260);
       if (bottom > maxBottom) maxBottom = bottom;
     });
-    if (this._grid) this._grid.style.minHeight = (maxBottom + 40) + 'px';
+    if (this._canvas) {
+      const nextHeight = (maxBottom + 40) + 'px';
+      this._canvas.style.height = nextHeight;
+      this._canvas.style.minHeight = nextHeight;
+    }
   }
 
   _autoLayout() {
@@ -246,6 +256,15 @@ export class Dashboard {
 
     const datasets = [];
     (project.groups || []).forEach(g => g.datasets.forEach(d => datasets.push(d)));
+    const gaugeDatasets = [];
+    (project.groups || []).forEach((group) => {
+      const groupForcesGauge = group.widget === 'Gauges';
+      (group.datasets || []).forEach((dataset) => {
+        if (groupForcesGauge || dataset.gauge) {
+          gaugeDatasets.push(dataset);
+        }
+      });
+    });
 
     const W = (this._grid?.clientWidth || 1100) - 8;
     const col = Math.floor(W / 2);
@@ -259,19 +278,19 @@ export class Dashboard {
         datasetLabels: datasets.map(d => d.title + (d.units ? ` (${d.units})` : '')),
         x: 0, y, w: W, h: 280
       });
-      mp.mount(this._grid); this._widgets.push(mp);
+      mp.mount(this._canvas); this._widgets.push(mp);
       y += 288;
     }
 
-    // Gauges for each gauge-enabled dataset
+    // Gauges for each gauge-enabled dataset or any group explicitly marked as Gauges
     let gx = 0;
-    datasets.filter(d => d.gauge).forEach((ds, i) => {
+    gaugeDatasets.forEach((ds, i) => {
       const g = new GaugeWidget({
         title: ds.title, datasetIndex: ds.index,
         min: ds.min, max: ds.max, units: ds.units, colorIdx: i,
         x: gx, y, w: Math.floor(W / 3), h: 260
       });
-      g.mount(this._grid); this._widgets.push(g);
+      g.mount(this._canvas); this._widgets.push(g);
       gx += Math.floor(W / 3);
       if (gx + Math.floor(W / 3) > W) { gx = 0; y += 268; }
     });
@@ -283,7 +302,7 @@ export class Dashboard {
         title: 'All Data', icon: '▦', datasets,
         x: 0, y, w: W, h: 260
       });
-      dg.mount(this._grid); this._widgets.push(dg);
+      dg.mount(this._canvas); this._widgets.push(dg);
     }
 
     this._updateCanvasHeight();
@@ -316,7 +335,33 @@ export class Dashboard {
     this._widgets.forEach(w => w.reset?.());
   }
 
+  _handleWheelScroll(e) {
+    if (!this._container || e.ctrlKey || e.metaKey) return;
+    if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+
+    const target = this._findScrollableTarget(e.target);
+    if (!target) return;
+
+    target.scrollTop += e.deltaY;
+    e.preventDefault();
+  }
+
+  _findScrollableTarget(startEl) {
+    let el = startEl instanceof HTMLElement ? startEl : null;
+    while (el && el !== this._container) {
+      const style = window.getComputedStyle(el);
+      const overflowY = style.overflowY;
+      const canScroll =
+        (overflowY === 'auto' || overflowY === 'scroll') &&
+        el.scrollHeight > el.clientHeight;
+      if (canScroll) return el;
+      el = el.parentElement;
+    }
+    return this._container.scrollHeight > this._container.clientHeight ? this._container : null;
+  }
+
   destroy() {
+    this._container?.removeEventListener('wheel', this._wheelHandler);
     this._widgets.forEach(w => w.destroy?.());
     this._widgets = [];
   }

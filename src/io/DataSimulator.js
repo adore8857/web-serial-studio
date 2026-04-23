@@ -3,7 +3,7 @@
  */
 import { eventBus } from '../core/EventBus.js';
 import { appState, ConnectionState } from '../core/AppState.js';
-import { FrameParser } from '../core/FrameParser.js';
+import { FrameParser } from '../core/FrameParser.js?v=accel-fix-20260423-2';
 
 export class DataSimulator {
   constructor() {

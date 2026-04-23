@@ -3,7 +3,7 @@
  */
 import { eventBus } from '../core/EventBus.js';
 import { appState, BusType, ConnectionState } from '../core/AppState.js';
-import { FrameParser } from '../core/FrameParser.js';
+import { FrameParser } from '../core/FrameParser.js?v=accel-fix-20260423-2';
 import { SerialDriver } from './SerialDriver.js';
 import { WebSocketDriver } from './WebSocketDriver.js';
 import { MqttDriver } from './MqttDriver.js';

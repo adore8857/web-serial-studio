@@ -352,37 +352,50 @@ export class FrameParser {
     const view = new DataView(frameData.buffer, frameData.byteOffset, frameData.byteLength);
     const shift = payloadOnly ? -2 : 0;
     const adjusted = (offset) => offset + shift;
+    const accelScale = 0.000488;
 
-    // 1. Extract Vibration (int16_t adcx[2132]) - Little Endian
-    const vib = [];
+    const toAccelG = (raw, removeGravity = false) => {
+      const accelG = raw * accelScale;
+      if (!removeGravity) return accelG;
+      if (accelG === 0) return 0;
+      return accelG - Math.sign(accelG);
+    };
+
+    // 1. Extract acceleration waveform (int16_t adcx[2132]) - Little Endian.
+    // This channel is treated as the Z-axis acceleration. After converting
+    // the signed ADC values to g, remove the static 1 g gravity component so
+    // the resting baseline is close to 0 g.
+    const accelZ = [];
     for (let i = 0; i < 2132; i++) {
-      vib.push(view.getInt16(adjusted(12) + i * 2, true));
+      const raw = view.getInt16(adjusted(12) + i * 2, true);
+      accelZ.push(toAccelG(raw, true));
     }
 
-    // Helper function for 24-bit Big Endian Two's Complement (ADS124S08)
-    const parse24bit = (offset) => {
+    const parseSigned24BitRaw = (offset) => {
       const pos = adjusted(offset);
       const msb = frameData[pos];
       const mid = frameData[pos + 1];
       const lsb = frameData[pos + 2];
       let val = (msb << 16) | (mid << 8) | lsb;
       if (val & 0x800000) val -= 0x1000000;
-      return (2.5 * val) / 8388608.0;
+      return val;
     };
 
-    // 2. Extract Strain 1, 2, 3 (each is 160 samples of 24-bit data)
+    const convertAds24ToVoltage = (raw) => (raw * 2.5) / 8388608.0;
+
+    // 2. Extract Strain 1, 2, 3 (each is 160 samples of 24-bit signed data)
     const str1 = [];
     const str2 = [];
     const str3 = [];
     for (let i = 0; i < 160; i++) {
-      str1.push(parse24bit(4276 + i * 3));
-      str2.push(parse24bit(4756 + i * 3));
-      str3.push(parse24bit(5236 + i * 3));
+      str1.push(convertAds24ToVoltage(parseSigned24BitRaw(4276 + i * 3)));
+      str2.push(convertAds24ToVoltage(parseSigned24BitRaw(4756 + i * 3)));
+      str3.push(convertAds24ToVoltage(parseSigned24BitRaw(5236 + i * 3)));
     }
 
-    // 3. Extract Temp (ADS124S08Temp_Data[13])
+    // 3. Extract temperatures
     const tempOffset = adjusted(5716);
-    const temp1 = parse24bit(5716);
+    const temp1 = convertAds24ToVoltage(parseSigned24BitRaw(5716));
 
     const tmp117_msb = frameData[tempOffset + 3];
     const tmp117_lsb = frameData[tempOffset + 4];
@@ -393,7 +406,7 @@ export class FrameParser {
     this._emitFrame({
       title: 'STM32 Bearing Data',
       datasets: [
-        { title: 'Vibration', value: vib[vib.length - 1], index: 0, buffer: vib },
+        { title: 'Accel Z',   value: accelZ[accelZ.length - 1], index: 0, buffer: accelZ },
         { title: 'Strain 1',  value: str1[str1.length - 1], index: 1, buffer: str1 },
         { title: 'Strain 2',  value: str2[str2.length - 1], index: 2, buffer: str2 },
         { title: 'Strain 3',  value: str3[str3.length - 1], index: 3, buffer: str3 },

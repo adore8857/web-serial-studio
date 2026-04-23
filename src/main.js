@@ -3,13 +3,13 @@
  */
 import { eventBus } from './core/EventBus.js';
 import { appState } from './core/AppState.js';
-import { ConnectionManager } from './io/ConnectionManager.js';
-import { DataSimulator } from './io/DataSimulator.js';
+import { ConnectionManager } from './io/ConnectionManager.js?v=accel-fix-20260423-4';
+import { DataSimulator } from './io/DataSimulator.js?v=accel-fix-20260423-4';
 import { Toolbar } from './ui/Toolbar.js';
 import { Sidebar } from './ui/Sidebar.js';
-import { Dashboard } from './ui/Dashboard.js';
+import { Dashboard } from './ui/Dashboard.js?v=gauge-fix-20260423-1';
 import { Console } from './ui/Console.js';
-import { ProjectModel } from './core/ProjectModel.js';
+import { ProjectModel } from './core/ProjectModel.js?v=gauge-fix-20260423-1';
 import { PreferencesDialog } from './ui/PreferencesDialog.js';
 
 class App {
@@ -30,8 +30,8 @@ class App {
       <div class="main-area" id="main-area">
         <div id="sidebar-root"></div>
         <div class="dashboard-container" id="content-area">
-          <div id="dashboard-area" class="dashboard-container" style="display:flex;flex-direction:column;flex:1;overflow:hidden"></div>
-          <div id="console-area" style="height:100%;display:none;flex-direction:column;flex:1;overflow:hidden"></div>
+          <div id="dashboard-area" class="dashboard-container" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden"></div>
+          <div id="console-area" style="height:100%;display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden"></div>
         </div>
       </div>
       <div id="taskbar-root"></div>
